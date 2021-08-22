@@ -1,2 +1,2 @@
-model_checkpoint_path: "model_conv_stride2_GPR"
-all_model_checkpoint_paths: "model_conv_stride2_GPR"
+model_checkpoint_path: "model_conv_stride2"
+all_model_checkpoint_paths: "model_conv_stride2"
