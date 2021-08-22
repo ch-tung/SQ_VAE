@@ -17,7 +17,6 @@
 # ## Setup
 
 import numpy as np
-import PIL
 import tensorflow as tf
 import tensorflow_probability as tfp
 import time
@@ -272,10 +271,14 @@ with tf.device('/cpu:0'):
 
 # ### Training GPR
 print('start training')
+start_time = time.time()
 with tf.device('/cpu:0'):
     opt_logs = opt.minimize(m_GPR.training_loss, m_GPR.trainable_variables, options=dict(maxiter=100))
 print_summary(m_GPR)
+end_time = time.time()
 print('end training')
+print('time elapse: {}'.format(end_time - start_time))
+
 
 # ### save model
 m_GPR.predict_f_compiled = tf.function(
