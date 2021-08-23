@@ -30,11 +30,11 @@ import scipy.interpolate as interp
 sq_min = np.exp(-5)
 
 if 1:
-    X_file = '../data/input_grid_all_GPR80.csv'
-    Y_file = '../data/target_grid_all.csv'
+    X_file = '../../../data/input_grid_all_GPR80.csv'
+    Y_file = '../../../data/target_grid_all.csv'
 else:
-    X_file = '../data/input_random_all_GPR80.csv'
-    Y_file = '../data/target_random_all.csv'
+    X_file = '../../../data/input_random_all_GPR80.csv'
+    Y_file = '../../../data/target_random_all.csv'
     
 fX = open(X_file, 'r', encoding='utf-8-sig')
 sq = np.genfromtxt(fX, delimiter=',').astype(np.float32)
@@ -76,11 +76,11 @@ sq_rs[sq_rs<=0] = sq_min
 # ### Test set
 
 if 0:
-    X_file = '../data/input_grid_all_GPR80.csv'
-    Y_file = '../data/target_grid_all.csv'
+    X_file = '../../../data/input_grid_all_GPR80.csv'
+    Y_file = '../../../data/target_grid_all.csv'
 else:
-    X_file = '../data/input_random_all_GPR80.csv'
-    Y_file = '../data/target_random_all.csv'
+    X_file = '../../../data/input_random_all_GPR80.csv'
+    Y_file = '../../../data/target_random_all.csv'
     
 fX_test = open(X_file, 'r', encoding='utf-8-sig')
 sq_test = np.genfromtxt(fX_test, delimiter=',').astype(np.float32)
@@ -206,7 +206,7 @@ with tf.device('/cpu:0'):
 
 # ## Load trained model
 
-export_path = './saved_model/SQ_cVAE_MSE_ns/'
+export_path = '../../saved_model/SQ_cVAE_MSE_ns/'
 model_name = 'model_conv_stride2_GPR'
 export_name = export_path + model_name
 
@@ -247,53 +247,32 @@ print('GPR training set ready')
 # ## GPR
 
 # Use GPR to infer the potential parameters from to the latent vatiables in `Fit_cVAE` by the `GPflow` package.
+print('import sklearn')
+from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.gaussian_process.kernels import RBF, WhiteKernel
 
-import gpflow
-from gpflow.utilities import print_summary
-from gpflow.ci_utils import ci_niter
+X = zs[:,:]
+Y = parameters_GP[:,0] # eta
 
-# ### define kernal, mu and GPR model
-print('define kernal, mu and GPR model')
-k_GPR = gpflow.kernels.RBF()
-meanf = gpflow.mean_functions.Zero()
-print_summary(k_GPR)
+kernel = RBF(1) + WhiteKernel(1)
+gp = GaussianProcessRegressor(kernel=kernel, alpha=0.0, optimizer=None).fit(X, Y)
 
-with tf.device('/cpu:0'):
-    m_GPR = gpflow.models.GPR(data=(zs.astype('float64'), parameters_GP.astype('float64')), kernel=k_GPR, mean_function=meanf)
-    m_GPR.likelihood.variance.assign(0.01)
-    m_GPR.kernel.lengthscales.assign(0.3)
-print_summary(m_GPR)
+theta0 = np.logspace(-1, 2, 50) # len_s
+theta1 = np.logspace(-8, -3, 50) # noise
 
-# ### define optimizer
-print('optimizer')
-with tf.device('/cpu:0'):
-    opt = gpflow.optimizers.Scipy()
+print('start calculating LML')
+tStart = time.time()
 
-# ### Training GPR
-print('start training')
-start_time = time.time()
-with tf.device('/cpu:0'):
-    opt_logs = opt.minimize(m_GPR.training_loss, m_GPR.trainable_variables, options=dict(maxiter=100))
-print_summary(m_GPR)
-end_time = time.time()
-print('end training')
-print('time elapse: {}'.format(end_time - start_time))
+Theta0, Theta1 = np.meshgrid(theta0, theta1)
+LML = [[gp.log_marginal_likelihood(np.log([Theta0[i, j], Theta1[i, j]]))
+        for i in range(Theta0.shape[0])] for j in range(Theta0.shape[1])]
+LML = np.array(LML).T
 
+from scipy.io import savemat
+mdic = {'len_s':theta0, 'noise':theta1, 'LML':LML}
+savemat("LML_eta.mat", mdic)
 
-# ### save model
-m_GPR.predict_f_compiled = tf.function(
-    m_GPR.predict_f, input_signature=[tf.TensorSpec(shape=[None, 3], dtype=tf.float64)]
-    )
-	
-# Here `samples_input` needs to be a tensor so that `tf.function will` compile a single graph
-samples_input = zs[0:1,:].astype('float64')
-original_result = m_GPR.predict_f_compiled(samples_input)
+tEnd = time.time()
+print('job end')
 
-model_name_GPR = 'GPflow/model_GPR'
-export_name_GPR = export_path + model_name_GPR
-tf.saved_model.save(m_GPR, export_name_GPR)
-
-print('model saved')
-
-#mean, var = m_GPR.predict_f(zs[2000:2001,:].astype('float64'))
-#print(mean)
+print("It cost %f sec" % (tEnd - tStart))
