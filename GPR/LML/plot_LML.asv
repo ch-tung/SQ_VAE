@@ -2,7 +2,7 @@ clear
 close all
 
 %% load
-data = load('LML_lnA.mat');
+data = load('LML_eta.mat');
 
 LML = data.LML;
 lens = data.len_s;
@@ -14,7 +14,7 @@ LML_max = max(LML,[],'all')
 LML_min = min(LML,[],'all')
 
 % levels = logspace(0,5,50);
-levels = linspace(-1e4,-6e3,100);
+levels = linspace(-5e2,5e2,100);
 
 figure;
 contour(thetagrid_XX, thetagrid_YY, LML, levels, 'LineWidth', 2)
@@ -23,9 +23,9 @@ contour(thetagrid_XX, thetagrid_YY, LML, levels, 'LineWidth', 2)
 % opt_theta = [7.74,1.94e-07]; %eta
 % opt_theta = [0.922,0.000116]; %kappa
 % opt_theta = [0.417,0.0118]; %lnZ
-% opt_theta = [0.373,0.0183]; %lnA
+opt_theta = [0.373,0.0183]; %lnA
 hold on
-% plot(opt_theta(1),opt_theta(2),'rx','LineWidth',2,'MarkerSize',20)
+plot(opt_theta(1),opt_theta(2),'rx','LineWidth',2,'MarkerSize',20)
 
 %% figure settings
 % load tw_flag.mat
@@ -42,8 +42,8 @@ c.Title.String = "\rho";
 colorbar off
 
 box on
-xlim([min(lens) max(lens)])
-ylim([min(noise) max(noise)])
+xlim([1e-2 1e1])
+ylim([1e-3 1e-1])
 xticks(10.^[-20:20])
 yticks(10.^[-20:20])
 % xlabel('True value (\sigma)','FontSize',24)
