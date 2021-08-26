@@ -1,2 +1,2 @@
-model_checkpoint_path: "model_conv_stride2"
-all_model_checkpoint_paths: "model_conv_stride2"
+model_checkpoint_path: "model_conv_stride2_batch32"
+all_model_checkpoint_paths: "model_conv_stride2_batch32"
