@@ -258,7 +258,7 @@ Y = parameters_GP[:,0] # eta
 len_s = 1
 sigma_y = 3e-6
 
-kernel = RBF(len_s, (1e-1, 1e2)) + WhiteKernel(sigma_y, (1e-8,1e-4))
+kernel = RBF(len_s, (5e-1, 2e0)) + WhiteKernel(sigma_y, (2e-6,5e-5))
 gp = GaussianProcessRegressor(kernel=kernel, alpha=0.0, n_restarts_optimizer=10)
 
 tStart = time.time()

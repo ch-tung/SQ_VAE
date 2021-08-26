@@ -253,12 +253,12 @@ from sklearn.gaussian_process.kernels import RBF, WhiteKernel
 import joblib
 
 X = zs[:,:]
-Y = parameters_GP[:,1] # kappa
+Y = parameters_GP[:,2] # lnA
 
-len_s = 5e-1
-sigma_y = 1.5e-3
+len_s = 0.3
+sigma_y = 0.1
 
-kernel = RBF(len_s, (3e-1, 1e0)) + WhiteKernel(sigma_y, (5e-4,2e-3))
+kernel = RBF(len_s, (1e-1, 1e0)) + WhiteKernel(sigma_y, (5e-2,2e-1))
 gp = GaussianProcessRegressor(kernel=kernel, alpha=0.0, n_restarts_optimizer=10)
 
 tStart = time.time()
@@ -267,7 +267,7 @@ print("GPML kernel: %s" % gp.kernel_)
 print("Log-marginal-likelihood: %.3f"
     % gp.log_marginal_likelihood(gp.kernel_.theta))
 
-model_name_GPR = 'sklearn/model_GPR_kappa'
+model_name_GPR = 'sklearn/model_GPR_lnA'
 export_name_GPR = export_path + model_name_GPR
 joblib.dump(gp, export_name_GPR)
 
