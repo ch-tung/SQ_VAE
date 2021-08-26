@@ -207,7 +207,7 @@ with tf.device('/cpu:0'):
 # ## Load trained model
 
 export_path = '../../saved_model/SQ_cVAE_MSE_ns/'
-model_name = 'model_conv_stride2_GPR'
+model_name = 'model_conv_stride2_batch32'
 export_name = export_path + model_name
 
 with tf.device('/cpu:0'):
