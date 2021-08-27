@@ -222,12 +222,14 @@ x = to_tf(f_inp(sq_test_mask))
 mean, logvar = model.encode(x)
 z = model.reparameterize(mean, logvar)
 x_logit = model.sample(z)
-z = z.numpy()    
-F = z.T
+z = z.numpy()
+z_mean = np.mean(z,axis=0)
+zc = z-z_mean
+F = zc.T
 
 U, S, Vh = np.linalg.svd(F)
 
-zs = np.matmul(z,U)
+zs = np.matmul(zc,U)
 
 for i in range(3):
     if np.abs(np.min(zs,axis = 0)[i]) > np.abs(np.max(zs,axis = 0)[i]):

@@ -222,12 +222,14 @@ x = to_tf(f_inp(sq_test_mask))
 mean, logvar = model.encode(x)
 z = model.reparameterize(mean, logvar)
 x_logit = model.sample(z)
-z = z.numpy()    
-F = z.T
+z = z.numpy()
+z_mean = np.mean(z,axis=0)
+zc = z-z_mean
+F = zc.T
 
 U, S, Vh = np.linalg.svd(F)
 
-zs = np.matmul(z,U)
+zs = np.matmul(zc,U)
 
 for i in range(3):
     if np.abs(np.min(zs,axis = 0)[i]) > np.abs(np.max(zs,axis = 0)[i]):
@@ -255,11 +257,11 @@ import joblib
 X = zs[:,:]
 Y = parameters_GP[:,0] # eta
 
-len_s = 1
-sigma_y = 3e-6
+len_s = 1.2649
+sigma_y = 2.8118e-06
 
-kernel = RBF(len_s, (5e-1, 2e0)) + WhiteKernel(sigma_y, (2e-6,5e-5))
-gp = GaussianProcessRegressor(kernel=kernel, alpha=0.0, n_restarts_optimizer=10)
+kernel = RBF(len_s, (5e-1, 2e0)) + WhiteKernel(sigma_y, (1e-6,5e-6))
+gp = GaussianProcessRegressor(kernel=kernel, alpha=0.0, n_restarts_optimizer=0)
 
 tStart = time.time()
 gp.fit(X, Y)
