@@ -218,16 +218,25 @@ print('model loaded')
 
 model_r = reload_sm._root
 
-x = to_tf(f_inp(sq_test_mask))
-mean, logvar = model.encode(x)
-z = model.reparameterize(mean, logvar)
-x_logit = model.sample(z)
-z = z.numpy()
-z_mean = np.mean(z,axis=0)
-zc = z-z_mean
-F = zc.T
+#x = to_tf(f_inp(sq_test_mask))
+#mean, logvar = model.encode(x)
+#z = model.reparameterize(mean, logvar)
+#x_logit = model.sample(z)
+#z = z.numpy()
+#z_mean = np.mean(z,axis=0)
+#zc = z-z_mean
+#F = zc.T
+#
+#U, S, Vh = np.linalg.svd(F)
 
-U, S, Vh = np.linalg.svd(F)
+with np.load(export_path +'lv_SVD_batch32.npz') as data:
+    zc = data['zc']
+    z_mean = data['z_mean']
+    U = data['U']
+    z = data['z']
+
+print(U)
+print(z_mean)
 
 zs = np.matmul(zc,U)
 
@@ -269,8 +278,9 @@ print("GPML kernel: %s" % gp.kernel_)
 print("Log-marginal-likelihood: %.3f"
     % gp.log_marginal_likelihood(gp.kernel_.theta))
 
+export_path_GPR = '../../saved_model/GPR/' 
 model_name_GPR = 'sklearn/model_GPR_kappa'
-export_name_GPR = export_path + model_name_GPR
+export_name_GPR = export_path_GPR + model_name_GPR
 joblib.dump(gp, export_name_GPR)
 
 tEnd = time.time()
