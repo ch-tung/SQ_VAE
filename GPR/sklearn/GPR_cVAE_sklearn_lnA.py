@@ -207,7 +207,7 @@ with tf.device('/cpu:0'):
 # ## Load trained model
 
 export_path = '../../saved_model/SQ_cVAE_MSE_ns/'
-model_name = 'model_conv_stride2_GPR'
+model_name = 'model_conv_stride2_batch32'
 export_name = export_path + model_name
 
 with tf.device('/cpu:0'):
@@ -257,7 +257,7 @@ import joblib
 X = zs[:,:]
 Y = parameters_GP[:,2] # lnA
 
-len_s = 0.3393
+len_s = 0.3907
 sigma_y = 0.1099
 
 kernel = RBF(len_s, (1e-1, 1e0)) + WhiteKernel(sigma_y, (5e-2,2e-1))
