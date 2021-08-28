@@ -14,7 +14,7 @@ LML_max = max(LML,[],'all')
 LML_min = min(LML,[],'all')
 
 % levels = logspace(0,5,50);
-levels = linspace(0,3e4,100);
+levels = linspace(-1e5,-6.3e3,100);
 
 figure;
 contour(thetagrid_XX, thetagrid_YY, LML, levels, 'LineWidth', 2)
