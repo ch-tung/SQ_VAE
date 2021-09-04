@@ -73,9 +73,9 @@ lnA_all = np.concatenate((lnA, lnA_test), axis=0)
 # GPR #################################
 # define kernel
 
-X_all = sq_all
+X_all = sq_test
 
-Y_all = kappa_all
+Y_all = kappa_test
 #Y = kappa
 #Y = lnZ
 
