@@ -44,12 +44,12 @@ def compute_loss_l2(parameters, SQ, model):
     return loss
 
 class Train_NN:
-    def __init__(self,n_epoch,batch_size,batch_size_test,train_rate,f_loss,model,
+    def __init__(self,n_epoch,batch_size,batch_size_validate,train_rate,f_loss,model,
                   data_train, data_test, test_SQ_sample, test_parameters_sample,
                   fig_path,model_path):
         self.n_epoch = n_epoch
         self.batch_size = batch_size
-        self.batch_size_test = batch_size_test
+        self.batch_size_validate = batch_size_validate
         self.optimizer = tf.keras.optimizers.Adam(train_rate)
         self.f_loss = f_loss
         self.model = model
@@ -67,19 +67,6 @@ class Train_NN:
         
         self.test_SQ_sample = test_SQ_sample
         self.test_parameters_sample = test_parameters_sample
-        
-#         # Pick a sample of the test set for generating output images
-#         # no random
-#         i = 0
-#         for test_SQ_batch in self.train_SQ_dataset:
-#             if i == 6:
-#                 self.test_SQ_sample = test_SQ_batch[0:16, :]
-#             i+=1
-#         i = 0
-#         for test_parameters_batch in self.train_parameters_dataset:
-#             if i == 6:
-#                 self.test_parameters_sample = test_parameters_batch[0:16, :]
-#             i+=1
 
     @tf.function
     def train_step(self, parameters, SQ, model, optimizer):
@@ -126,15 +113,15 @@ class Train_NN:
 
             # test set    
             for test_SQ_batch in self.test_SQ_dataset.take(1):
-                test_SQ = test_SQ_batch[0:self.batch_size_test, :]
+                test_SQ = test_SQ_batch[0:self.batch_size, :]
             for test_parameters_batch in self.test_parameters_dataset.take(1):
-                test_parameters = test_parameters_batch[0:self.batch_size_test, :]
+                test_parameters = test_parameters_batch[0:self.batch_size, :]
 
             # validation set
             for validate_SQ_batch in self.test_SQ_dataset.take(1):
-                validate_SQ = validate_SQ_batch[0:self.batch_size_test, :]
+                validate_SQ = validate_SQ_batch[0:self.batch_size_validate, :]
             for validate_parameters_batch in self.test_parameters_dataset.take(1):
-                validate_parameters = validate_parameters_batch[0:self.batch_size_test, :]
+                validate_parameters = validate_parameters_batch[0:self.batch_size_validate, :]
 
             start_time = time.time()
             self.train_step(train_parameters, train_SQ, self.model, self.optimizer)    
