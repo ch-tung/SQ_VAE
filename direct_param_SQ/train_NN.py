@@ -213,14 +213,20 @@ class Train_NN_V:
         eps = model.reparameterize(mean, logvar)
         predictions = f_out(model.sample(eps))
         
+        sample_mean, sample_std = model.sample_normal(test_parameters_sample)
+        predictions_mean = f_out(sample_mean)
+        predictions_mean_p = f_out(sample_mean+sample_std)
+        predictions_mean_n = f_out(sample_mean-sample_std)
 
         fig = plt.figure(figsize=(8, 8))
 
         for i in range(GT.shape[0]):
             plt.subplot(4, 4, i + 1)
             plt.plot(q_rs,GT[i,:],'k')
-            plt.plot(q_rs,predictions[i,:],'.c')    
-            plt.plot(q_rs,predictions_0[i,:],'-b')
+#             plt.plot(q_rs,predictions[i,:],'.c')    
+#             plt.plot(q_rs,predictions_0[i,:],'-b')
+            plt.fill_between(q_rs,predictions_mean_p[i,:],predictions_mean_n[i,:],color='b',alpha=0.5)
+            plt.plot(q_rs,predictions_mean[i,:],'-b')    
 
             #plt.axis('off')
             plt.ylim(0, 3)
