@@ -66,6 +66,7 @@ class Decoder_aug(tf.keras.Model):
             return probs
         return logits
     
+    @tf.function
     def sample_normal(self, x):
         mean, logvar = self.encode(x)
         eps = tf.random.normal(shape=(64, self.latent_dim))
@@ -89,12 +90,12 @@ class Decoder_aug(tf.keras.Model):
 # load trained model
 model = Decoder_aug(latent_dim=3, sq_dim=80)
 
-export_path_aug = './saved_model/SQ_NLL_variation/SQ_NLL-hom_variation_aug_ft/'
-model_name_aug = 'SQ_NLL-hom_variation_aug_ft'
+export_path_aug = './saved_model/SQ_NLL_variation/SQ_NLL-hom_variation_aug_ft2/'
+model_name_aug = 'SQ_NLL-hom_variation_aug_ft2'
 export_name_aug = export_path_aug + model_name_aug
 
-export_path_decoder = './saved_model/SQ_NLL_variation/SQ_NLL-hom_variation_decoder_ft/'
-model_name_decoder = 'SQ_NLL-hom_variation_decoder_ft'
+export_path_decoder = './saved_model/SQ_NLL_variation/SQ_NLL-hom_variation_decoder_ft2/'
+model_name_decoder = 'SQ_NLL-hom_variation_decoder_ft2'
 export_name_decoder = export_path_decoder + model_name_decoder
 
 aug_layers_loaded = model.aug_layers.load_weights(export_name_aug, by_name=False, skip_mismatch=False, options=None)
@@ -124,20 +125,32 @@ def f_out_tf(predictions):
     return tf.math.exp((predictions*2-1)*exp_scale)
 
 # --------------------------------------
-# Scattering function
-def SQ_NN(parameters):
-    
-    # mean and std of the training set labels
-    mean = np.array([0.2325,0.2600,13.0000])
-    std = np.sqrt(np.array([0.0169,0.0208,52.0000]))
-    parameters_z = [(parameters[i]-mean[i])/std[i] for i in range(3)]
-    
-    x = tf.reshape(to_tf(parameters_z),(1,3))
-    sample_mean, sample_std = model.sample_normal(x)
-    
-    return f_out_tf(sample_mean).numpy().reshape(80).astype('float64')
+# smoothing using GP
+def RBF(d,lmbda):
+    return np.exp(-d**2/2/lmbda**2)
 
-def SQ_NN_tf(parameters):
+def mldivide(A,B):
+    return np.linalg.pinv(A).dot(B)
+
+def sm_GP(f,lmbda,sigma):
+    q_rs = (np.arange(80)+1)*0.2
+    d_ij = q_rs.reshape(80,1) - q_rs.reshape(1,80)
+    
+    K = RBF(d_ij,lmbda)
+    K_s = K
+    K_y = K + np.eye(80)*sigma**2
+    
+    y = f
+    L = np.linalg.cholesky(K_y)
+
+    alpha = mldivide(L.T,mldivide(L,y))
+    E = K_s.T@alpha
+    
+    return E
+
+# --------------------------------------
+# Scattering function
+def SQ_NN(parameters, GP=False, lmbda=0.5, sigma=0.1):
     
     # mean and std of the training set labels
     mean = np.array([0.2325,0.2600,13.0000])
@@ -146,6 +159,30 @@ def SQ_NN_tf(parameters):
     
     x = tf.reshape(to_tf(parameters_z),(1,3))
     sample_mean, sample_std = model.sample_normal(x)
+    sample_mean = sample_mean[0]
     
-    return f_out_tf(sample_mean)
+    if not GP:
+        return f_out_tf(sample_mean).numpy().reshape(80).astype('float64')
+    else:
+        sample_mean_GP = sm_GP(sample_mean-0.5,lmbda,sigma)+0.5
+        return f_out_tf(sample_mean_GP).numpy().reshape(80).astype('float64')
+
+def SQ_NN_tf(parameters, GP=False, lmbda=0.5, sigma=0.1):
+    
+    # mean and std of the training set labels
+    mean = np.array([0.2325,0.2600,13.0000])
+    std = np.sqrt(np.array([0.0169,0.0208,52.0000]))
+    parameters_z = [(parameters[i]-mean[i])/std[i] for i in range(3)]
+    
+    x = tf.reshape(to_tf(parameters_z),(1,3))
+    sample_mean, sample_std = model.sample_normal(x)
+    sample_mean = sample_mean[0]
+    
+    SQ = f_out_tf(sample_mean)
+    
+    if not GP:
+        return f_out_tf(sample_mean)
+    else:
+        sample_mean_GP = sm_GP(sample_mean-0.5,lmbda,sigma)+0.5
+        return f_out_tf(sample_mean_GP)
 # --------------------------------------

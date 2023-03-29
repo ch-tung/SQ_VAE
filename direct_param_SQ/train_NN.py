@@ -173,7 +173,8 @@ class Train_NN_V:
         
         self.test_SQ_sample = test_SQ_sample
         self.test_parameters_sample = test_parameters_sample
-        
+    
+    @tf.function
     def compute_loss_l2(self, parameters, SQ, model):
         # SQ rescaled to range [0,1]
 
@@ -197,7 +198,8 @@ class Train_NN_V:
             loss = self.f_loss(parameters, SQ, model)
         gradients = tape.gradient(loss, model.trainable_variables)
         optimizer.apply_gradients(zip(gradients, model.trainable_variables))
-        
+    
+    @tf.function
     def SQ_pred(self,x):
         mean, logvar = self.model.encode(x)
         eps = self.model.reparameterize(mean, logvar)
@@ -271,11 +273,11 @@ class Train_NN_V:
             self.err_train_epoch[epoch-1] = err_train
             self.err_validate_epoch[epoch-1] = err_validate
 
-            display.clear_output(wait=0.5)
+            display.clear_output(wait=True)
             self.generate_and_save_images(self.model, epoch+self.epoch_prev, 
                                           self.test_SQ_sample, self.test_parameters_sample)
         
-        self.epoch_counter = epoch
+        self.epoch_counter = self.epoch_counter + epoch
         
     def save_model_aug(self, model_path_sub = '', model_name='model_aug'):
         if not os.path.isdir(self.model_path+model_path_sub):
