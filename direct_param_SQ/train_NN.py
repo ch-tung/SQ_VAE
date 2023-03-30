@@ -150,7 +150,7 @@ class Train_NN:
 class Train_NN_V:
     def __init__(self,n_epoch, batch_size, batch_size_validate, train_rate, f_loss, model,
                   data_train, data_test, test_SQ_sample, test_parameters_sample,
-                  fig_path,model_path):
+                  fig_path,model_path,save_fig=True):
         self.n_epoch = n_epoch
         self.batch_size = batch_size
         self.batch_size_validate = batch_size_validate
@@ -173,6 +173,7 @@ class Train_NN_V:
         
         self.test_SQ_sample = test_SQ_sample
         self.test_parameters_sample = test_parameters_sample
+        self.save_fig = save_fig
     
     @tf.function
     def compute_loss_l2(self, parameters, SQ, model):
@@ -232,10 +233,11 @@ class Train_NN_V:
 
             #plt.axis('off')
             plt.ylim(0, 3)
-
-        # tight_layout minimizes the overlap between 2 sub-plots
-        pngname = self.fig_path+'{:04d}.png'
-        plt.savefig(pngname.format(epoch))
+        
+        if self.save_fig:
+            # tight_layout minimizes the overlap between 2 sub-plots
+            pngname = self.fig_path+'{:04d}.png'
+            plt.savefig(pngname.format(epoch))
         plt.show()
     
     def fit(self):
