@@ -85,17 +85,24 @@ class Decoder_aug(tf.keras.Model):
         logits_mean = tf.math.reduce_mean(logits_samples,axis=0)
         
         return logits_mean, logits_std
+    
+    @tf.function
+    def sample_mean(self, x):
+        mean, logvar = self.encode(x)        
+        logits_mean = self.decode(mean, apply_sigmoid=True)
+        
+        return logits_mean
 
 # --------------------------------------
 # load trained model
 model = Decoder_aug(latent_dim=3, sq_dim=80)
 
 export_path_aug = './saved_model/SQ_L2_variation/SQ_L2_variation_aug_ft3/'
-model_name_aug = 'SQ_L2_variation_aug_ft3'
+model_name_aug = 'SQ_L2_variation_aug_ft3_0.5'
 export_name_aug = export_path_aug + model_name_aug
 
 export_path_decoder = './saved_model/SQ_L2_variation/SQ_L2_variation_decoder_ft3/'
-model_name_decoder = 'SQ_L2_variation_decoder_ft3'
+model_name_decoder = 'SQ_L2_variation_decoder_ft3_0.5'
 export_name_decoder = export_path_decoder + model_name_decoder
 
 aug_layers_loaded = model.aug_layers.load_weights(export_name_aug, by_name=False, skip_mismatch=False, options=None)
@@ -158,7 +165,8 @@ def SQ_NN(parameters, GP=False, lmbda=0.5, sigma=0.1):
     parameters_z = [(parameters[i]-mean[i])/std[i] for i in range(3)]
     
     x = tf.reshape(to_tf(parameters_z),(1,3))
-    sample_mean, sample_std = model.sample_normal(x)
+#     sample_mean, sample_std = model.sample_normal(x)
+    sample_mean = model.sample_mean(x)
     sample_mean = sample_mean[0]
     
     if not GP:
@@ -175,7 +183,8 @@ def SQ_NN_tf(parameters, GP=False, lmbda=0.5, sigma=0.1):
     parameters_z = [(parameters[i]-mean[i])/std[i] for i in range(3)]
     
     x = tf.reshape(to_tf(parameters_z),(1,3))
-    sample_mean, sample_std = model.sample_normal(x)
+#     sample_mean, sample_std = model.sample_normal(x)
+    sample_mean = model.sample_mean(x)
     sample_mean = sample_mean[0]
     
     SQ = f_out_tf(sample_mean)

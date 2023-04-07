@@ -1,2 +1,2 @@
-model_checkpoint_path: "SQ_L2_variation_decoder_ft3"
-all_model_checkpoint_paths: "SQ_L2_variation_decoder_ft3"
+model_checkpoint_path: "SQ_L2_variation_decoder_ft3_0.2"
+all_model_checkpoint_paths: "SQ_L2_variation_decoder_ft3_0.2"

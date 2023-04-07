@@ -1,0 +1,23 @@
+äúÅ>20¿ÄÆ½¾Uj¼¾tly¿VK?[ü?H ¾¯Š/<úÏM?&„š½¸ðÆ½Ù»¿¨Å>D¾n­>‘É×¾KÜF>1Ä¥¿Yv³¿ÐÜ? Š?´6¿ab&?^u¿òy ¾éV>»-ˆ?Q};?Û­‰?Wj?ç¨®¼'Ô½Ÿ|?e»†?ƒV_?üˆ>”€L¾ŠÅ>›]¿Â„—¿úc‚¿ui>4Ð›>á<|?û5¿Úõ÷¾ž´˜¾ÇÄ0?øüZ¿ß™½>„¼Ö>/|>Äñ>ÂA¿ýc?ùdª¾Õú¾ nÈ¾…ï¿íç ½jÂþ=Jw>xÇO¿Ã3+¿e‚8¿’ïŒo¹
+Z
+layer_with_weights-0
+layer-0
+layer_with_weights-1
+layer-1
+root*
+
+
+kernel
+bias*
+
+
+kernel
+bias*
+_Y
+VARIABLE_VALUEdense_in/kernel6layer_with_weights-0/kernel/.ATTRIBUTES/VARIABLE_VALUE*
+[U
+VARIABLE_VALUEdense_in/bias4layer_with_weights-0/bias/.ATTRIBUTES/VARIABLE_VALUE*
+`Z
+VARIABLE_VALUEdense_in2/kernel6layer_with_weights-1/kernel/.ATTRIBUTES/VARIABLE_VALUE*
+\V
+VARIABLE_VALUEdense_in2/bias4layer_with_weights-1/bias/.ATTRIBUTES/VARIABLE_VALUE*
