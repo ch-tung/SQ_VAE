@@ -98,11 +98,11 @@ class Decoder_aug(tf.keras.Model):
 model = Decoder_aug(latent_dim=3, sq_dim=80)
 
 export_path_aug = './saved_model/SQ_L2_variation/SQ_L2_variation_aug_ft3/'
-model_name_aug = 'SQ_L2_variation_aug_ft3_0.5'
+model_name_aug = 'SQ_L2_variation_aug_ft3'
 export_name_aug = export_path_aug + model_name_aug
 
 export_path_decoder = './saved_model/SQ_L2_variation/SQ_L2_variation_decoder_ft3/'
-model_name_decoder = 'SQ_L2_variation_decoder_ft3_0.5'
+model_name_decoder = 'SQ_L2_variation_decoder_ft3'
 export_name_decoder = export_path_decoder + model_name_decoder
 
 aug_layers_loaded = model.aug_layers.load_weights(export_name_aug, by_name=False, skip_mismatch=False, options=None)
