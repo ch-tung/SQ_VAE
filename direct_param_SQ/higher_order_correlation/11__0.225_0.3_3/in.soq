@@ -1,0 +1,10 @@
+dumpStep 500
+endStep 5000
+breakStep 5000
+initStep 0
+dt 0.005
+directory ./
+nBins 2000
+dBins 0.01
+nTypes 1
+types 1

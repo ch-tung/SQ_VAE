@@ -1,0 +1,45 @@
+Your job starts at Thu Apr 20 00:09:47 CST 2023
+# dumpStep 500
+# endStep 5000
+# breakStep 5000
+# initStep 0
+# dt 0.005000
+# directory ./
+# nBins 2000
+# dBins 0.010000
+# nTypes 1
+# types  1
+# nStep 11
+# MPI threads 4
+# Frames/mpi thread 3
+# nAtom: 16384
+# pbcl: { 17.006855, 17.006855 17.006855 }
+# dBins: 0.010000
+# nBins: 2000
+# nSol: 16384
+# Calculating S(q) for rank:0 and step 0
+# Calculating S(q) for rank:1 and step 3
+# Calculating S(q) for rank:2 and step 6
+# Calculating S(q) for rank:3 and step 9
+# Done calculating S(q) for rank:0 and step 0
+# Done calculating S(q) for rank:1 and step 3
+# Done calculating S(q) for rank:2 and step 6
+# Calculating S(q) for rank:2 and step 7
+# Calculating S(q) for rank:0 and step 1
+# Done calculating S(q) for rank:3 and step 9
+# Done calculating S(q) for rank:2 and step 7
+# Calculating S(q) for rank:2 and step 8
+# Done calculating S(q) for rank:2 and step 8
+# Done calculating S(q) for rank:0 and step 1
+# Calculating S(q) for rank:0 and step 2
+# Done calculating S(q) for rank:0 and step 2
+# Calculating S(q) for rank:1 and step 4
+# Done calculating S(q) for rank:1 and step 4
+# Calculating S(q) for rank:1 and step 5
+# Done calculating S(q) for rank:1 and step 5
+# Calculating S(q) for rank:3 and step 10
+# Done calculating S(q) for rank:3 and step 10
+# Done calculating S(q)
+# Done printing S(q)
+# total_time 2.220000
+Your job ended at  Thu Apr 20 00:09:47 CST 2023 

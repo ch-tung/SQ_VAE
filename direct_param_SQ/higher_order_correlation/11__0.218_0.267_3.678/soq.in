@@ -1,0 +1,19 @@
+#!/bin/bash
+#PBS -P MST111235
+#PBS -N soq
+#PBS -l select=1:ncpus=4:mpiprocs=4
+#PBS -q cf40
+#PBS -j eo 
+
+cd /work1/u6666666/yukawa/SQ_NN/fixed_c/11__0.218_0.267_3.678
+
+#OMP_NUM_THREADS=1
+
+echo "Your job starts at Thu Apr 20 00:09:47 CST 2023"
+
+module load intel/2018_u1
+mpiexec -np 4 soq_mpi_fftv3_mod < in.soq
+wait
+
+echo "Your job ended at  Thu Apr 20 00:09:47 CST 2023 "
+
