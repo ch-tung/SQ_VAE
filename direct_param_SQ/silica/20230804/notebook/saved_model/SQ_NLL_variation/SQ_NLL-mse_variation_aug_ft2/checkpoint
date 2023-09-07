@@ -1,0 +1,2 @@
+model_checkpoint_path: "SQ_NLL-mse_variation_aug_ft2"
+all_model_checkpoint_paths: "SQ_NLL-mse_variation_aug_ft2"
